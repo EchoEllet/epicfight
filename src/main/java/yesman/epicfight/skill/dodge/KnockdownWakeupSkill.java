@@ -8,6 +8,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.client.events.engine.ControlEngine;
+import yesman.epicfight.client.input.EpicFightControls;
+import yesman.epicfight.client.input.InputState;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
@@ -24,9 +26,10 @@ public class KnockdownWakeupSkill extends DodgeSkill {
 		Input input = executor.getOriginal().input;
 		float sneakingSpeed = (float)executor.getOriginal().getAttributeValue(Attributes.SNEAKING_SPEED);
 		input.tick(false, sneakingSpeed);
-		
-        int left = input.left ? 1 : 0;
-        int right = input.right ? -1 : 0;
+
+        InputState inputState = EpicFightControls.getInputState();
+        int left = inputState.left() ? 1 : 0;
+        int right = inputState.right() ? -1 : 0;
 		int horizon = left + right;
 		float yRot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();
 		

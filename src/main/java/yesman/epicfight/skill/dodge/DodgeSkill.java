@@ -15,6 +15,8 @@ import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.client.events.engine.ControlEngine;
+import yesman.epicfight.client.input.EpicFightControls;
+import yesman.epicfight.client.input.InputState;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.skill.Skill;
 import yesman.epicfight.skill.SkillBuilder;
@@ -58,11 +60,13 @@ public class DodgeSkill extends Skill {
 		Input input = executor.getOriginal().input;
 		float sneakingSpeed = (float)executor.getOriginal().getAttributeValue(Attributes.SNEAKING_SPEED);
 		input.tick(false, sneakingSpeed);
-		
-        int forward = input.up ? 1 : 0;
-        int backward = input.down ? -1 : 0;
-        int left = input.left ? 1 : 0;
-        int right = input.right ? -1 : 0;
+
+        InputState inputState = EpicFightControls.getInputState();
+        int forward = inputState.up() ? 1 : 0;
+        int backward = inputState.down() ? -1 : 0;
+        int left = inputState.left() ? 1 : 0;
+        int right = inputState.right() ? -1 : 0;
+
 		int vertic = forward + backward;
 		int horizon = left + right;
 		float yRot = Minecraft.getInstance().gameRenderer.getMainCamera().getYRot();

@@ -35,6 +35,8 @@ import yesman.epicfight.api.neoevent.playerpatch.SkillCastEvent;
 import yesman.epicfight.client.ClientEngine;
 import yesman.epicfight.client.gui.screen.SkillEditScreen;
 import yesman.epicfight.client.gui.screen.config.IngameConfigurationScreen;
+import yesman.epicfight.client.input.EpicFightControls;
+import yesman.epicfight.client.input.EpicFightInputAction;
 import yesman.epicfight.client.input.EpicFightKeyMappings;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.config.ClientConfig;
@@ -111,7 +113,7 @@ public class ControlEngine implements IEventBasedEngine {
 		if (this.playerpatch == null) {
 			return;
 		}
-		
+
 		if (isKeyPressed(EpicFightKeyMappings.SKILL_EDIT, false)) {
 			if (this.playerpatch.getPlayerSkills() != null) {
 				Minecraft.getInstance().setScreen(new SkillEditScreen(this.player, this.playerpatch.getPlayerSkills()));
@@ -126,7 +128,7 @@ public class ControlEngine implements IEventBasedEngine {
 			boolean flag = ClientEngine.getInstance().switchVanillaModelDebuggingMode();
 			this.minecraft.keyboardHandler.debugFeedbackTranslated(flag ? "debug.vanilla_model_debugging.on" : "debug.vanilla_model_debugging.off");
 		}
-		
+
 		while (isKeyPressed(EpicFightKeyMappings.ATTACK, true)) {
 			if (this.playerpatch.isEpicFightMode() && this.currentHoldingKey != EpicFightKeyMappings.ATTACK) {
 				boolean shouldPlayAttackAnimation = this.playerpatch.canPlayAttackAnimation();
@@ -134,6 +136,7 @@ public class ControlEngine implements IEventBasedEngine {
 				if (this.options.keyAttack.getKey() == EpicFightKeyMappings.ATTACK.getKey() && this.minecraft.hitResult != null) {
 					// Disable vanilla attack key
 					if (shouldPlayAttackAnimation) {
+                        // TODO: Need to support controller! DUMMY_FOR_TESTING
 						makeUnpressed(this.options.keyAttack);
 					}
 				}
@@ -178,7 +181,7 @@ public class ControlEngine implements IEventBasedEngine {
 				} else {
 					SkillSlot skillCategory = (this.playerpatch.getEntityState().knockDown()) ? SkillSlots.KNOCKDOWN_WAKEUP : SkillSlots.DODGE;
 					SkillContainer skill = this.playerpatch.getSkill(skillCategory);
-					
+
 					if (!skill.isEmpty() && skill.sendCastRequest(this.playerpatch, this).shouldReserveKey()) {
 						this.reserveKey(SkillSlots.DODGE, EpicFightKeyMappings.DODGE);
 					}
@@ -230,7 +233,9 @@ public class ControlEngine implements IEventBasedEngine {
 		
 		while (isKeyPressed(EpicFightKeyMappings.MOVER_SKILL, true)) {
 			if (this.playerpatch.isEpicFightMode() && !this.playerpatch.isHoldingAny()) {
-				if (EpicFightKeyMappings.MOVER_SKILL.getKey().getValue() == this.options.keyJump.getKey().getValue()) {
+//                EpicFightKeyMappings.MOVER_SKILL.getKey().getValue() == this.options.keyJump.getKey().getValue()
+                // TODO: Without this true force check, it won't work on controller. Try to fix properly
+				if (true) {
 					SkillContainer skillContainer = this.playerpatch.getSkill(SkillSlots.MOVER);
 					SkillCastEvent event = new SkillCastEvent(this.playerpatch, skillContainer, null);
 					
@@ -273,7 +278,7 @@ public class ControlEngine implements IEventBasedEngine {
 		}
 		
 		if (this.weaponInnatePressToggle) {
-			if (!isKeyDown(EpicFightKeyMappings.WEAPON_INNATE_SKILL)) {
+			if (!EpicFightControls.isActionTriggeredEf(EpicFightInputAction.WEAPON_INNATE_SKILL)) {
 				this.attackLightPressToggle = true;
 				this.weaponInnatePressToggle = false;
 				this.weaponInnatePressCounter = 0;
@@ -401,7 +406,7 @@ public class ControlEngine implements IEventBasedEngine {
 	
 	private void inputTick(Input input) {
 		if (this.moverPressToggle) {
-			if (!isKeyDown(this.options.keyJump)) {
+			if (!EpicFightControls.isActionTriggeredEf(EpicFightInputAction.JUMP)) {
 				this.moverPressToggle = false;
 				this.moverPressCounter = 0;
 				
@@ -487,19 +492,20 @@ public class ControlEngine implements IEventBasedEngine {
 			return false;
 		}
 	}
-	
+
+    @Deprecated
 	private static boolean isKeyPressed(KeyMapping key, boolean eventCheck) {
 		boolean consumes = key.consumeClick();
-		
+
 		if (consumes && eventCheck) {
 			int mouseButton = InputConstants.Type.MOUSE == key.getKey().getType() ? key.getKey().getValue() : -1;
 			InputEvent.InteractionKeyMappingTriggered inputEvent = ClientHooks.onClickInput(mouseButton, key, InteractionHand.MAIN_HAND);
-			
+
 	        if (inputEvent.isCanceled()) {
 	        	return false;
 	        }
 		}
-        
+
     	return consumes;
 	}
 	

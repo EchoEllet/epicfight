@@ -19,6 +19,8 @@ import yesman.epicfight.api.client.animation.property.JointMaskEntry;
 import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.datastructure.ParameterizedHashMap;
+import yesman.epicfight.client.input.EpicFightControls;
+import yesman.epicfight.client.input.InputState;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
@@ -132,17 +134,21 @@ public class ComboAttackAnimation extends AttackAnimation {
 	public boolean isComboAttackAnimation() {
 		return true;
 	}
+
+    // TODO: Create Controlify combat/battle mode context? So attack keys are applied only in combat
 	
 	@Override
 	public boolean shouldPlayerMove(LocalPlayerPatch playerpatch) {
 		if (playerpatch.isLogicalClient()) {
 			if (!EpicFightGameRules.STIFF_COMBO_ATTACKS.getRuleValue(playerpatch.getOriginal().level())) {
-				if (playerpatch.getOriginal().input.forwardImpulse != 0.0F || playerpatch.getOriginal().input.leftImpulse != 0.0F) {
+                // TODO: Does this fix anything for controller support?
+                InputState inputState = EpicFightControls.getInputState();
+				if (inputState.forwardImpulse() != 0.0F || inputState.leftImpulse() != 0.0F) {
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
 	}
 }

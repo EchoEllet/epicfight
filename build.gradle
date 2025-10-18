@@ -25,6 +25,18 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
     
     maven {
     	// location of the maven that hosts JEI files since January 2023
@@ -136,6 +148,14 @@ dependencies {
     
     // First-person compatibility (optional) (Warn: this mod file will cause crash, as it references obfuscated names)
     compileOnly "local:firstperson:2.5.0"
+
+    // Uncomment to test Controlify compatibility
+    implementation "local:controlify:2.4.2"
+    localRuntime "curse.maven:yacl-667299:7036475"
+    localRuntime "maven.modrinth:in-game-account-switcher:2ByghZuX"
+
+//    localRuntime "curse.maven:sword-soaring-1011068:7081426"
+//    localRuntime "curse.maven:epic-fight-invincible-1184379:7108550"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

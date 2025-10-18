@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -242,6 +243,10 @@ public class EpicFightMod {
 			}
 		}
 	}
+
+    public static ResourceLocation id(String namespace) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, namespace);
+    }
     
     /**
      * FML Lifecycle Events

@@ -24,6 +24,9 @@ import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.ValueModifier;
 import yesman.epicfight.api.utils.math.Vec3f;
 import yesman.epicfight.client.events.engine.ControlEngine;
+import yesman.epicfight.client.input.EpicFightControls;
+import yesman.epicfight.client.input.EpicFightInputAction;
+import yesman.epicfight.client.input.InputState;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.registry.entries.EpicFightSkillDataKeys;
@@ -66,7 +69,7 @@ public class PhantomAscentSkill extends Skill {
 		}
 		
 		// Check directly from the keybind because event.getMovementInput().isJumping doesn't allow to be set as true while player's jumping
-		boolean jumpPressed = Minecraft.getInstance().options.keyJump.isDown();
+		boolean jumpPressed = EpicFightControls.isActionTriggered(EpicFightInputAction.JUMP);
 		boolean jumpPressedPrev = skillContainer.getDataManager().getDataValue(EpicFightSkillDataKeys.JUMP_KEY_PRESSED_LAST_TICK);
 		
 		if (jumpPressed && !jumpPressedPrev) {
@@ -97,11 +100,12 @@ public class PhantomAscentSkill extends Skill {
 					Input input = event.getInput();
 					float sneakingSpeed = (float)skillContainer.getExecutor().getOriginal().getAttributeValue(Attributes.SNEAKING_SPEED);
 					input.tick(false, sneakingSpeed);
-					
-			        int forward = event.getInput().up ? 1 : 0;
-			        int backward = event.getInput().down ? -1 : 0;
-			        int left = event.getInput().left ? 1 : 0;
-			        int right = event.getInput().right ? -1 : 0;
+
+                    InputState inputState = EpicFightControls.getInputState();
+			        int forward = inputState.up() ? 1 : 0;
+			        int backward = inputState.down() ? -1 : 0;
+			        int left = inputState.left() ? 1 : 0;
+			        int right = inputState.right() ? -1 : 0;
 					int vertic = forward + backward;
 					int horizon = left + right;
 					int degree = -(90 * horizon * (1 - Math.abs(vertic)) + 45 * vertic * horizon);
